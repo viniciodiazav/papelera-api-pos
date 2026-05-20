@@ -76,3 +76,8 @@ proveedorNoEncontradoCompraException = HTTPException(
     status_code=status.HTTP_404_NOT_FOUND,
     detail="Proveedor no encontrado",
 )
+
+constantePacaException = HTTPException(
+    status_code=status.HTTP_200_OK,
+    detail="La constante paca es la misma que la actual",
+)

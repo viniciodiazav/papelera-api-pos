@@ -70,6 +70,16 @@ class PrecioMaterialRequest(BaseModel):
         }
     }
 
+class ConstantePacaRequest(BaseModel):
+    constante_paca: Decimal = Field(gt=0)
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "constante_paca": 600,
+            }
+        }
+    }
 
 class ClienteRequest(BaseModel):
     nombre: str = Field(min_length=3, max_length=40)
