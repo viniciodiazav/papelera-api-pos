@@ -72,7 +72,7 @@ async def actualizarPrecioMaterial(
     db.refresh(material)
     return material
 
-@router.put("/contante-paca/{id}", status_code=status.HTTP_200_OK, response_model=MaterialResponse)
+@router.put("/contante-paca/{id}", status_code=status.HTTP_200_OK)
 async def actualizarConstantePaca(
     db: dbDependency,
     usuario: dependenciaUsuario,
@@ -94,7 +94,7 @@ async def actualizarConstantePaca(
     return material
 
 
-@router.delete("/{id}")
+@router.delete("/{id}", status_code=status.HTTP_200_OK)
 async def eliminarMaterial(db: dbDependency, usuario: dependenciaUsuario, id: int):
     if usuario is None:
         raise usuarioNoEncontradoException

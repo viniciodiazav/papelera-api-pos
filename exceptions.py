@@ -1,5 +1,5 @@
+# pyrefly: ignore [missing-import]
 from fastapi import HTTPException, status
-
 
 usuarioYaExisteException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
