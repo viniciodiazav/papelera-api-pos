@@ -35,6 +35,16 @@ async def materilaesParaCompraVenta(db: dbDependency, usuario: dependenciaUsuari
     return db.query(Material).filter(Material.activo == True).all()
 
 
+@router.get("/material/{id}", response_model=MaterialResponse, status_code=status.HTTP_200_OK)
+async def materialPorId(db: dbDependency, usuario: dependenciaUsuario, id: int):
+    if usuario is None:
+        raise usuarioNoEncontradoException
+    material = db.query(Material).filter(Material.id == id, Material.activo == True).first()
+    if material is None:
+        raise materialNoEncontradoException
+    return material
+
+
 @router.post("/nuevo-material", status_code=status.HTTP_201_CREATED)
 async def crearMaterial(
     db: dbDependency, usuario: dependenciaUsuario, material: MaterialRequest
