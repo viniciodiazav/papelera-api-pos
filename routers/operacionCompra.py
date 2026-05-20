@@ -41,6 +41,7 @@ async def nuevaOperacionCompra(
         transaccionCompra=transaccionCompra,
         material=material
     )
+    db.add(operaciones["operacion"])
     db.commit()
     db.refresh(operaciones["operacion"])
     db.refresh(operaciones["transaccion"])
