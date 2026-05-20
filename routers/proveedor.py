@@ -16,11 +16,11 @@ from responses import ProveedorResponse
 router = APIRouter(prefix="/proveedor", tags=["Proveedor"])
 
 
-@router.get("/", response_model=list[ProveedorResponse], status_code=status.HTTP_200_OK)
+@router.get("/proveedores", response_model=list[ProveedorResponse], status_code=status.HTTP_200_OK)
 def obtener_proveedores(db: dbDependency, usuario: dependenciaUsuario):
     if usuario is None:
         raise usuarioNoEncontradoException
-    return db.query(Proveedor).all()
+    return db.query(Proveedor).filter(Proveedor.activo == True).all()
 
 
 @router.post("/nuevo-proveedor", status_code=status.HTTP_201_CREATED, response_model=ProveedorResponse)
@@ -29,9 +29,9 @@ def crear_proveedor(
 ):
     if usuario is None:
         raise usuarioNoEncontradoException
-    if db.query(Proveedor).filter(Proveedor.nombre == proveedor.nombre).first():
+    if db.query(Proveedor).filter(Proveedor.nombre == proveedor.nombre, Proveedor.activo == True).first():
         raise proveedorYaExisteException
-    if db.query(Proveedor).filter(Proveedor.contacto == proveedor.contacto).first():
+    if db.query(Proveedor).filter(Proveedor.contacto == proveedor.contacto, Proveedor.activo == True).first():
         raise contactoYaExisteException
     proveedor = Proveedor(**proveedor.model_dump())
     db.add(proveedor)
@@ -40,7 +40,7 @@ def crear_proveedor(
     return proveedor
 
 
-@router.put("/{id}", status_code=status.HTTP_200_OK)
+@router.put("/{id}", status_code=status.HTTP_200_OK, response_model=ProveedorResponse)
 def actualizar_proveedor(
     db: dbDependency, usuario: dependenciaUsuario, id: int, proveedor: ProveedorRequest
 ):
@@ -53,13 +53,13 @@ def actualizar_proveedor(
         raise proveedorNoEncontradoException
     if (
         db.query(Proveedor)
-        .filter(Proveedor.nombre == proveedor.nombre, Proveedor.id != id)
+        .filter(Proveedor.nombre == proveedor.nombre, Proveedor.id != id, Proveedor.activo == True)
         .first()
     ):
         raise proveedorYaExisteException
     if (
         db.query(Proveedor)
-        .filter(Proveedor.contacto == proveedor.contacto, Proveedor.id != id)
+        .filter(Proveedor.contacto == proveedor.contacto, Proveedor.id != id, Proveedor.activo == True)
         .first()
     ):
         raise contactoYaExisteException
