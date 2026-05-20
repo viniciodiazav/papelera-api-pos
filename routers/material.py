@@ -10,6 +10,7 @@ from exceptions import (
     noAutorizadoException,
 )
 from requests import MaterialRequest, PrecioMaterialRequest
+from responses import MaterialResponse
 
 router = APIRouter(prefix="/material", tags=["Material"])
 
@@ -23,21 +24,11 @@ async def obtenerMateriales(db: dbDependency, usuario: dependenciaUsuario):
     return db.query(Material).all()
 
 
-@router.get("/materiales")
+@router.get("/materiales", response_model=list[MaterialResponse])
 async def materilaesParaCompraVenta(db: dbDependency, usuario: dependenciaUsuario):
     if usuario is None:
         raise usuarioNoEncontradoException
-    materiales = db.query(Material).all()
-    return [
-        {
-            "id": m.id,
-            "nombre": m.nombre,
-            "constante_paca": m.constante_paca,
-            "precio_compra": m.precio_compra,
-            "precio_venta": m.precio_venta,
-        }
-        for m in materiales
-    ]
+    return db.query(Material).filter(Material.activo == True).all()
 
 
 @router.post("/nuevo-material")
@@ -57,7 +48,7 @@ async def crearMaterial(
     return material
 
 
-@router.put("/{id}")
+@router.put("/precio/{id}")
 async def actualizarPrecioMaterial(
     db: dbDependency,
     usuario: dependenciaUsuario,

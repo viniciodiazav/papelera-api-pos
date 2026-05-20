@@ -1,5 +1,5 @@
 # pyrefly: ignore [missing-import]
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from database import dbDependency
 from models import Proveedor
 from .auth import dependenciaUsuario
@@ -11,18 +11,19 @@ from exceptions import (
     noAutorizadoException,
 )
 from requests import ProveedorRequest
+from responses import ProveedorResponse
 
 router = APIRouter(prefix="/proveedor", tags=["Proveedor"])
 
 
-@router.get("/")
+@router.get("/", response_model=list[ProveedorResponse], status_code=status.HTTP_200_OK)
 def obtener_proveedores(db: dbDependency, usuario: dependenciaUsuario):
     if usuario is None:
         raise usuarioNoEncontradoException
     return db.query(Proveedor).all()
 
 
-@router.post("/nuevo-proveedor")
+@router.post("/nuevo-proveedor", status_code=status.HTTP_201_CREATED, response_model=ProveedorResponse)
 def crear_proveedor(
     db: dbDependency, usuario: dependenciaUsuario, proveedor: ProveedorRequest
 ):
@@ -39,7 +40,7 @@ def crear_proveedor(
     return proveedor
 
 
-@router.put("/{id}")
+@router.put("/{id}", status_code=status.HTTP_200_OK)
 def actualizar_proveedor(
     db: dbDependency, usuario: dependenciaUsuario, id: int, proveedor: ProveedorRequest
 ):
@@ -69,7 +70,7 @@ def actualizar_proveedor(
     return proveedorEditar
 
 
-@router.delete("/{id}")
+@router.delete("/{id}", status_code=status.HTTP_200_OK)
 def eliminar_proveedor(db: dbDependency, usuario: dependenciaUsuario, id: int):
     if usuario is None:
         raise usuarioNoEncontradoException

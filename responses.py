@@ -16,3 +16,33 @@ class UsuarioResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class MaterialResponse(BaseModel):
+    id: int
+    nombre: str
+    constante_paca: int
+    precio_compra: float
+    precio_venta: float
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class ProveedorResponse(BaseModel):
+    id: int
+    nombre: str
+    contacto: str
+    
+    model_config = {
+        "from_attributes": True
+    }
+
+class ClienteResponse(BaseModel):
+    id: int
+    nombre: str
+    contacto: str
+    direccion: str
+
+    model_config = {
+        "from_attributes": True
+    }

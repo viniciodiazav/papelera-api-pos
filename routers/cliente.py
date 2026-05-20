@@ -1,5 +1,5 @@
 # pyrefly: ignore [missing-import]
-from fastapi import APIRouter
+from fastapi import APIRouter, status
 from database import dbDependency
 from models import Cliente
 from .auth import dependenciaUsuario
@@ -10,24 +10,28 @@ from exceptions import (
     noAutorizadoException,
 )
 from requests import ClienteRequest
+from responses import ClienteResponse
 
-router = APIRouter(prefix="/cliente", tags=["Cliente"])
+router = APIRouter(
+    prefix="/cliente",
+    tags=["Cliente"]
+)
 
 
-@router.get("/")
+@router.get("/", response_model=list[ClienteResponse], status_code=status.HTTP_200_OK)
 def obtener_clientes(db: dbDependency, usuario: dependenciaUsuario):
     if usuario is None:
         raise usuarioNoEncontradoException
-    return db.query(Cliente).all()
+    return db.query(Cliente).filter(Cliente.activo == True).all()
 
 
-@router.post("/nuevo-cliente")
+@router.post("/nuevo-cliente", status_code=status.HTTP_201_CREATED, response_model=ClienteResponse)
 def crear_cliente(
     db: dbDependency, usuario: dependenciaUsuario, cliente: ClienteRequest
 ):
     if usuario is None:
         raise usuarioNoEncontradoException
-    if db.query(Cliente).filter(Cliente.contacto == cliente.contacto).first():
+    if db.query(Cliente).filter(Cliente.contacto == cliente.contacto).first() is not None:
         raise contactoYaExisteException
     cliente = Cliente(**cliente.model_dump())
     db.add(cliente)
@@ -36,7 +40,7 @@ def crear_cliente(
     return cliente
 
 
-@router.put("/{id}")
+@router.put("/{id}", response_model=ClienteResponse, status_code=status.HTTP_200_OK)
 def actualizar_cliente(
     db: dbDependency,
     usuario: dependenciaUsuario,
@@ -64,7 +68,7 @@ def actualizar_cliente(
     return clienteActualizar
 
 
-@router.delete("/{id}")
+@router.delete("/{id}", status_code=status.HTTP_200_OK)
 def eliminar_cliente(db: dbDependency, usuario: dependenciaUsuario, id: int):
     if usuario is None:
         raise usuarioNoEncontradoException
