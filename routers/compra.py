@@ -24,19 +24,18 @@ async def nuevaCompraMayoreo(
     db: dbDependency,
     usuario: dependenciaUsuario,
     compraMayoreo: CompraMayoreoRequest,
-    idTransaccion: int,
 ):
     if usuario is None:
         raise usuarioNoEncontradoException
     if (
-        db.query(CompraMayoreo).filter_by(id_transaccion=idTransaccion).first()
+        db.query(CompraMayoreo).filter_by(id_transaccion=compraMayoreo.id_transaccion).first()
         is not None
-        or db.query(CompraMenudeo).filter_by(id_transaccion=idTransaccion).first()
+        or db.query(CompraMenudeo).filter_by(id_transaccion=compraMayoreo.id_transaccion).first()
         is not None
     ):
         raise transaccionYaExisteException
 
-    transaccion = db.query(TransaccionCompra).filter_by(id=idTransaccion).first()
+    transaccion = db.query(TransaccionCompra).filter_by(id=compraMayoreo.id_transaccion).first()
     if transaccion is None or transaccion.tipo_compra != "mayoreo":
         raise transaccionNoEncontradaException
 
@@ -45,7 +44,7 @@ async def nuevaCompraMayoreo(
     compra = CompraMayoreo(
         id_proveedor=compraMayoreo.id_proveedor,
         id_usuario=transaccion.id_usuario,
-        id_transaccion=idTransaccion,
+        id_transaccion=compraMayoreo.id_transaccion,
         fecha=datetime.utcnow(),
         placas=compraMayoreo.placas,
         bascula=compraMayoreo.bascula,
@@ -62,25 +61,24 @@ async def nuevaCompraMenudeo(
     db: dbDependency,
     usuario: dependenciaUsuario,
     compraMenudeo: CompraMenudeoRequest,
-    idTransaccion: int,
 ):
     if usuario is None:
         raise usuarioNoEncontradoException
     if (
-        db.query(CompraMayoreo).filter_by(id_transaccion=idTransaccion).first()
+        db.query(CompraMayoreo).filter_by(id_transaccion=compraMenudeo.id_transaccion).first()
         is not None
-        or db.query(CompraMenudeo).filter_by(id_transaccion=idTransaccion).first()
+        or db.query(CompraMenudeo).filter_by(id_transaccion=compraMenudeo.id_transaccion).first()
         is not None
     ):
         raise transaccionYaExisteException
 
-    transaccion = db.query(TransaccionCompra).filter_by(id=idTransaccion).first()
+    transaccion = db.query(TransaccionCompra).filter_by(id=compraMenudeo.id_transaccion).first()
     if transaccion is None or transaccion.tipo_compra != "menudeo":
         raise transaccionNoEncontradaException
 
     compra = CompraMenudeo(
         id_usuario=transaccion.id_usuario,
-        id_transaccion=idTransaccion,
+        id_transaccion=compraMenudeo.id_transaccion,
         fecha=datetime.utcnow(),
     )
     db.add(compra)

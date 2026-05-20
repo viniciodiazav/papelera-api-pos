@@ -22,12 +22,11 @@ router = APIRouter(
 async def nuevaOperacionCompra(
     db: dbDependency,
     usuario: dependenciaUsuario,
-    idTransaccion: int,
     operacion: OperacionCompraRequest,
 ):
     if usuario is None:
         raise usuarioNoEncontradoException
-    transaccionCompra = db.query(TransaccionCompra).filter_by(id=idTransaccion).first()
+    transaccionCompra = db.query(TransaccionCompra).filter_by(id=operacion.id_transaccion).first()
     if transaccionCompra is None:
         raise transaccionNoEncontradaException
     material = db.query(Material).filter_by(id=operacion.id_material).first()
@@ -41,7 +40,7 @@ async def nuevaOperacionCompra(
     kgsReales = pesoNeto - descuentoKgs
 
     operacionCompra = OperacionCompra(
-        id_transaccion=idTransaccion,
+        id_transaccion=operacion.id_transaccion,
         id_material=operacion.id_material,
         peso_bruto_kgs=operacion.peso_bruto_kgs,
         tara_kgs=operacion.tara_kgs,

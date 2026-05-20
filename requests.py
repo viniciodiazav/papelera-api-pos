@@ -98,6 +98,7 @@ class ClienteRequest(BaseModel):
 
 
 class OperacionCompraRequest(BaseModel):
+    id_transaccion: int = Field(gt=0)    
     id_material: int = Field(gt=0)
     peso_bruto_kgs: Decimal = Field(gt=0)
     tara_kgs: Decimal = Field(gt=0)
@@ -107,6 +108,7 @@ class OperacionCompraRequest(BaseModel):
     model_config = {
         "json_schema_extra": {
             "example": {
+                "id_transaccion": 1,
                 "id_material": 1,
                 "peso_bruto_kgs": 1,
                 "tara_kgs": 1,

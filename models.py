@@ -65,7 +65,7 @@ class Cliente(Base):
     id = Column(Integer, primary_key=True, index=True)
     nombre = Column(String(100), nullable=False)
     contacto = Column(String(200), nullable=False)
-    direccion = Column(String(200), nullable=False, unique=True)
+    direccion = Column(String(200), nullable=False)
     concurrencia = Column(Integer, nullable=False, default=0)
     activo = Column(Boolean, nullable=False, default=True)
 
