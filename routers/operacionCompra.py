@@ -41,9 +41,6 @@ async def nuevaOperacionCompra(
         transaccionCompra=transaccionCompra,
         material=material
     )
-    db.add(operaciones["operacion"])
-    db.add(operaciones["transaccion"])
-    db.add(operaciones["material"])
     db.commit()
     db.refresh(operaciones["operacion"])
     db.refresh(operaciones["transaccion"])
@@ -52,12 +49,17 @@ async def nuevaOperacionCompra(
 
 
 @router.get("/lista", status_code=status.HTTP_200_OK)
-def obtenerOperacionesCompras(db: dbDependency, usuario: dependenciaUsuario):
+def obtenerOperacionesCompras(
+    db: dbDependency, 
+    usuario: dependenciaUsuario, 
+    skip: int = 0, 
+    limit: int = 10
+):
     if usuario is None:
         raise usuarioNoEncontradoException
     if not usuario.get("admin"):
         raise noAutorizadoException
-    return db.query(OperacionCompra).all()
+    return db.query(OperacionCompra).offset(skip).limit(limit).all()
 
 
 @router.get("/lista/{idTransaccion}", status_code=status.HTTP_200_OK)
@@ -65,6 +67,8 @@ def obtenerOperacionesComprasFiltradas(
     db: dbDependency,
     usuario: dependenciaUsuario,
     idTransaccion: int,
+    skip: int = 0,
+    limit: int = 10,
 ):
     if usuario is None:
         raise usuarioNoEncontradoException
@@ -74,22 +78,40 @@ def obtenerOperacionesComprasFiltradas(
 
 
 @router.get("/lista/mayoreo", status_code=status.HTTP_200_OK)
-def obtenerOperacionesComprasMayoreo(db: dbDependency, usuario: dependenciaUsuario):
+def obtenerOperacionesComprasMayoreo(
+    db: dbDependency,
+    usuario: dependenciaUsuario,
+    skip: int = 0,
+    limit: int = 10,
+):
     if usuario is None:
         raise usuarioNoEncontradoException
     if not usuario.get("admin"):
         raise noAutorizadoException
     return (
-        db.query(OperacionCompra).filter(OperacionCompra.tipo_compra == "mayoreo").all()
+        db.query(OperacionCompra)
+        .filter(OperacionCompra.tipo_compra == "mayoreo")
+        .offset(skip)
+        .limit(limit)
+        .all()
     )
 
 
 @router.get("/lista/menudeo", status_code=status.HTTP_200_OK)
-def obtenerOperacionesComprasMenudeo(db: dbDependency, usuario: dependenciaUsuario):
+def obtenerOperacionesComprasMenudeo(
+    db: dbDependency, 
+    usuario: dependenciaUsuario, 
+    skip: int = 0, 
+    limit: int = 10
+):
     if usuario is None:
         raise usuarioNoEncontradoException
     if not usuario.get("admin"):
         raise noAutorizadoException
     return (
-        db.query(OperacionCompra).filter(OperacionCompra.tipo_compra == "menudeo").all()
+        db.query(OperacionCompra)
+        .filter(OperacionCompra.tipo_compra == "menudeo")
+        .offset(skip)
+        .limit(limit)
+        .all()
     )

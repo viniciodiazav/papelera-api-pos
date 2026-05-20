@@ -88,29 +88,44 @@ async def nuevaCompraMenudeo(
 
 
 @router.get("/todas-las-compras", status_code=status.HTTP_200_OK)
-def obtenerCompras(db: dbDependency, usuario: dependenciaUsuario):
+def obtenerCompras(
+    db: dbDependency, 
+    usuario: dependenciaUsuario, 
+    limit: int = 5,
+    skip: int = 0,
+):
     if usuario is None:
         raise usuarioNoEncontradoException
     if not usuario.get("admin"):
         raise noAutorizadoException
-    compras_mayoreo = db.query(CompraMayoreo).all()
-    compras_menudeo = db.query(CompraMenudeo).all()
+    compras_mayoreo = db.query(CompraMayoreo).offset(skip).limit(limit).all()
+    compras_menudeo = db.query(CompraMenudeo).offset(skip).limit(limit).all()
     return {"compras_mayoreo": compras_mayoreo, "compras_menudeo": compras_menudeo}
 
 
 @router.get("/compras-mayoreo", status_code=status.HTTP_200_OK)
-def obtenerComprasMayoreo(db: dbDependency, usuario: dependenciaUsuario):
+def obtenerComprasMayoreo(
+    db: dbDependency, 
+    usuario: dependenciaUsuario, 
+    limit: int = 10,
+    skip: int = 0,
+):
     if usuario is None:
         raise usuarioNoEncontradoException
     if not usuario.get("admin"):
         raise noAutorizadoException
-    return db.query(CompraMayoreo).all()
+    return db.query(CompraMayoreo).offset(skip).limit(limit).all()
 
 
 @router.get("/compras-menudeo", status_code=status.HTTP_200_OK)
-def obtenerComprasMenudeo(db: dbDependency, usuario: dependenciaUsuario):
+def obtenerComprasMenudeo(
+    db: dbDependency, 
+    usuario: dependenciaUsuario, 
+    limit: int = 10,
+    skip: int = 0,
+):
     if usuario is None:
         raise usuarioNoEncontradoException
     if not usuario.get("admin"):
         raise noAutorizadoException
-    return db.query(CompraMenudeo).all()
+    return db.query(CompraMenudeo).offset(skip).limit(limit).all()

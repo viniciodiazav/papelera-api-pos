@@ -20,12 +20,14 @@ router = APIRouter(
 
 
 @router.get("/")
-def obtenerTransaccionesCompras(db: dbDependency, usuario: dependenciaUsuario):
+def obtenerTransaccionesCompras(
+    db: dbDependency, usuario: dependenciaUsuario, skip: int=0, limit: int=10
+):
     if usuario is None:
         raise usuarioNoEncontradoException
     if not usuario.get("admin"):
         raise noAutorizadoException
-    return db.query(TransaccionCompra).all()
+    return db.query(TransaccionCompra).offset(skip).limit(limit).all()
 
 
 @router.post("/nueva-transaccion-compra", status_code=status.HTTP_201_CREATED, response_model=IniciarTrasaccionCompraResponse)
