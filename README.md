@@ -1,0 +1,12 @@
+# POS para papelera
+
+# Dependencies
+- uvicorn[standard]
+- FastAPI
+- SQLAlchemy
+- passlib
+- bcrypt==4.0.1
+- python-multipart
+- python-jose[cryptography]
+- psycopg2-binary
+- pipdeptree
