@@ -60,7 +60,7 @@ async def nuevaOperacionCompra(
     db.refresh(operacionCompra)
     db.refresh(transaccionCompra)
     db.refresh(material)
-    return operacionCompra
+    return {"mensaje": "Operacion de compra creada correctamente"}
 
 
 @router.get("/lista", status_code=status.HTTP_200_OK)
