@@ -67,8 +67,6 @@ def obtenerOperacionesComprasFiltradas(
     db: dbDependency,
     usuario: dependenciaUsuario,
     idTransaccion: int,
-    skip: int = 0,
-    limit: int = 10,
 ):
     if usuario is None:
         raise usuarioNoEncontradoException
