@@ -7,10 +7,11 @@ from exceptions import (
     transaccionNoEncontradaException,
     materialNoEncontradoException,
     noAutorizadoException,
+    transaccionCerradaException
 )
 from models import OperacionCompra, TransaccionCompra, Material
 from requests import OperacionCompraRequest
-from decimal import Decimal
+from service.operacionCompraService import crearOperacionCompra
 
 router = APIRouter(
     prefix="/operaciones-compras",
@@ -32,34 +33,21 @@ async def nuevaOperacionCompra(
     material = db.query(Material).filter_by(id=operacion.id_material).first()
     if material is None:
         raise materialNoEncontradoException
+    if transaccionCompra.cerrada:
+        raise transaccionCerradaException
 
-    pesoNeto = operacion.peso_bruto_kgs - operacion.tara_kgs
-    descuentoKgs = Decimal("0.0")
-    if operacion.descuento != Decimal("0.0"):
-        descuentoKgs = pesoNeto * (operacion.descuento / Decimal("100.0"))
-    kgsReales = pesoNeto - descuentoKgs
-
-    operacionCompra = OperacionCompra(
-        id_transaccion=operacion.id_transaccion,
-        id_material=operacion.id_material,
-        peso_bruto_kgs=operacion.peso_bruto_kgs,
-        tara_kgs=operacion.tara_kgs,
-        peso_neto_kgs=pesoNeto,
-        descuento=operacion.descuento,
-        descuento_kgs=descuentoKgs,
-        descripcion_descuento=operacion.descripcion_descuento,
-        kgs_reales=kgsReales,
-        precio_unitario=material.precio_compra,
-        tipo_compra=transaccionCompra.tipo_compra,
+    operaciones = crearOperacionCompra(
+        operacion=operacion,
+        transaccionCompra=transaccionCompra,
+        material=material
     )
-    material.kgs_en_inventario += kgsReales
-    material.pacas_estimadas = material.kgs_en_inventario / material.constante_paca
-    transaccionCompra.monto += operacionCompra.kgs_reales * operacionCompra.precio_unitario
-    db.add(operacionCompra)
+    db.add(operaciones["operacion"])
+    db.add(operaciones["transaccion"])
+    db.add(operaciones["material"])
     db.commit()
-    db.refresh(operacionCompra)
-    db.refresh(transaccionCompra)
-    db.refresh(material)
+    db.refresh(operaciones["operacion"])
+    db.refresh(operaciones["transaccion"])
+    db.refresh(operaciones["material"])
     return {"mensaje": "Operacion de compra creada correctamente"}
 
 

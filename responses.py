@@ -46,3 +46,13 @@ class ClienteResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class IniciarTrasaccionCompraResponse(BaseModel):
+    id: int
+    id_usuario: int
+    tipo_compra: str
+
+    model_config = {
+        "from_attributes": True
+    }
+

@@ -79,6 +79,7 @@ class TransaccionCompra(Base):
     tipo_pago = Column(String(30), nullable=True, default=None)
     observaciones = Column(String(150), nullable=True, default=None)
     tipo_compra = Column(String(30), nullable=False, default="mayoreo")
+    cerrada = Column(Boolean, nullable=False, default=False)
 
     operaciones = relationship(
         "OperacionCompra", back_populates="transaccion", cascade="all, delete-orphan"
@@ -114,6 +115,7 @@ class TransaccionVenta(Base):
     monto = Column(Numeric(10, 2), nullable=False)
     tipo_cobro = Column(String(30), nullable=False)
     observaciones = Column(String(150), nullable=True)
+    cerrada = Column(Boolean, nullable=False, default=False)
 
 
 class CompraMayoreo(Base):

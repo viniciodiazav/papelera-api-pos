@@ -112,8 +112,8 @@ class OperacionCompraRequest(BaseModel):
                 "id_material": 1,
                 "peso_bruto_kgs": 1,
                 "tara_kgs": 1,
-                "descuento": 1,
-                "descripcion_descuento": "desc",
+                "descuento": 0,
+                "descripcion_descuento": "no aplico",
             }
         }
     }

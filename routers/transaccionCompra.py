@@ -1,9 +1,16 @@
+# pyrefly: ignore [missing-import]
 from fastapi import APIRouter, status
 from database import dbDependency
 from .auth import dependenciaUsuario
-from exceptions import usuarioNoEncontradoException, noAutorizadoException
+from exceptions import (
+    usuarioNoEncontradoException,
+    noAutorizadoException,
+    transaccionNoEncontradaException,
+    transaccionCerradaException,
+)
 from models import TransaccionCompra
 from requests import TransaccionCompraRequest
+from responses import IniciarTrasaccionCompraResponse
 
 
 router = APIRouter(
@@ -21,7 +28,7 @@ def obtenerTransaccionesCompras(db: dbDependency, usuario: dependenciaUsuario):
     return db.query(TransaccionCompra).all()
 
 
-@router.post("/nueva-transaccion-compra", status_code=status.HTTP_201_CREATED)
+@router.post("/nueva-transaccion-compra", status_code=status.HTTP_201_CREATED, response_model=IniciarTrasaccionCompraResponse)
 async def nueva_transaccion_compra(
     db: dbDependency,
     usuario: dependenciaUsuario,
@@ -36,3 +43,22 @@ async def nueva_transaccion_compra(
     db.commit()
     db.refresh(transaccionCompra)
     return transaccionCompra
+
+
+@router.put("/cerrar-transaccion/{idTransaccion}", status_code=status.HTTP_200_OK)
+async def cerrar_transaccion_compra(
+    db: dbDependency,
+    usuario: dependenciaUsuario,
+    idTransaccion: int,
+):
+    if usuario is None:
+        raise usuarioNoEncontradoException
+    transaccion = db.query(TransaccionCompra).filter_by(id=idTransaccion).first()
+    if transaccion is None:
+        raise transaccionNoEncontradaException
+    if transaccion.cerrada:
+        raise transaccionCerradaException
+    transaccion.cerrada = True
+    db.commit()
+    db.refresh(transaccion)
+    return {"mensaje": "Transaccion cerrada correctamente"}
