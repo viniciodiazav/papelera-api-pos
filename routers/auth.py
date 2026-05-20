@@ -1,6 +1,7 @@
 # pyrefly: ignore [missing-import]
 from fastapi import APIRouter, status, Depends
 from requests import UsuarioRequest
+from responses import UsuarioResponse
 from database import dbDependency
 from models import Usuario
 # pyrefly: ignore [missing-import]
@@ -70,7 +71,7 @@ def crearTokenUsuario(usuario: Usuario, expiracion: timedelta):
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
-@router.post("/registrar_usuario", status_code=status.HTTP_201_CREATED)
+@router.post("/registrar_usuario", status_code=status.HTTP_201_CREATED, response_model=UsuarioResponse)
 async def registrarUsuario(usuarioRequest: UsuarioRequest, db: dbDependency):
     existeUsuario = (
         db.query(Usuario).filter(Usuario.username == usuarioRequest.username).first()
@@ -99,6 +100,6 @@ async def login(
     if usuario is None:
         raise usuarioNoEncontradoException
     token = crearTokenUsuario(
-        usuario, timedelta(minutes=10)
-    )  # <---------- checar el tiempo
+        usuario, timedelta(minutes=30)
+    ) 
     return {"access_token": token, "token_type": "bearer"}
