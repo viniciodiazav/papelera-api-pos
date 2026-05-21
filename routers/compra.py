@@ -8,10 +8,12 @@ from exceptions import (
     proveedorNoEncontradoCompraException,
     transaccionNoEncontradaException,
     noAutorizadoException,
+    transaccionNoCerradaException
 )
 from models import CompraMayoreo, CompraMenudeo, Proveedor, TransaccionCompra
 from requests import CompraMayoreoRequest, CompraMenudeoRequest
 from datetime import datetime
+from responses import CompraMayoreoReponse, CompraMenudeoResponse
 
 router = APIRouter(
     prefix="/compras",
@@ -39,8 +41,13 @@ async def nuevaCompraMayoreo(
     if transaccion is None or transaccion.tipo_compra != "mayoreo":
         raise transaccionNoEncontradaException
 
+    if not transaccion.cerrada:
+        raise transaccionNoCerradaException
+
     if db.query(Proveedor).filter_by(id=compraMayoreo.id_proveedor).first() is None:
         raise proveedorNoEncontradoCompraException
+
+
     compra = CompraMayoreo(
         id_proveedor=compraMayoreo.id_proveedor,
         id_usuario=transaccion.id_usuario,
@@ -53,7 +60,7 @@ async def nuevaCompraMayoreo(
     db.add(compra)
     db.commit()
     db.refresh(compra)
-    return compra
+    return {"mensaje": "Compra de mayoreo creada correctamente"}
 
 
 @router.post("/nueva-compra-menudeo", status_code=status.HTTP_201_CREATED)
@@ -76,6 +83,10 @@ async def nuevaCompraMenudeo(
     if transaccion is None or transaccion.tipo_compra != "menudeo":
         raise transaccionNoEncontradaException
 
+    if not transaccion.cerrada:
+        raise transaccionNoCerradaException
+
+
     compra = CompraMenudeo(
         id_usuario=transaccion.id_usuario,
         id_transaccion=compraMenudeo.id_transaccion,
@@ -84,10 +95,10 @@ async def nuevaCompraMenudeo(
     db.add(compra)
     db.commit()
     db.refresh(compra)
-    return compra
+    return {"mensaje": "Compra de menudeo creada correctamente"}
 
 
-@router.get("/todas-las-compras", status_code=status.HTTP_200_OK)
+@router.get("/todas-las-compras", status_code=status.HTTP_200_OK, response_model=list[CompraMayoreoReponse] | list[CompraMenudeoResponse])
 def obtenerCompras(
     db: dbDependency, 
     usuario: dependenciaUsuario, 
@@ -103,7 +114,7 @@ def obtenerCompras(
     return {"compras_mayoreo": compras_mayoreo, "compras_menudeo": compras_menudeo}
 
 
-@router.get("/compras-mayoreo", status_code=status.HTTP_200_OK)
+@router.get("/compras-mayoreo", status_code=status.HTTP_200_OK, response_model=list[CompraMayoreoReponse])
 def obtenerComprasMayoreo(
     db: dbDependency, 
     usuario: dependenciaUsuario, 
@@ -117,7 +128,7 @@ def obtenerComprasMayoreo(
     return db.query(CompraMayoreo).offset(skip).limit(limit).all()
 
 
-@router.get("/compras-menudeo", status_code=status.HTTP_200_OK)
+@router.get("/compras-menudeo", status_code=status.HTTP_200_OK, response_model=list[CompraMenudeoResponse])
 def obtenerComprasMenudeo(
     db: dbDependency, 
     usuario: dependenciaUsuario, 

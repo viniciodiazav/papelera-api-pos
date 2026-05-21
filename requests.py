@@ -101,7 +101,7 @@ class OperacionCompraRequest(BaseModel):
     id_transaccion: int = Field(gt=0)    
     id_material: int = Field(gt=0)
     peso_bruto_kgs: Decimal = Field(gt=0)
-    tara_kgs: Decimal = Field(gt=0)
+    tara_kgs: Decimal = Field(gt=-1)
     descuento: Optional[Decimal] = Field(default=0.00)
     descripcion_descuento: Optional[str] = Field(max_length=150, default=None)
 
@@ -161,3 +161,4 @@ class CompraMenudeoRequest(BaseModel):
             }
         }
     }
+

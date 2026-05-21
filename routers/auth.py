@@ -71,7 +71,7 @@ def crearTokenUsuario(usuario: Usuario, expiracion: timedelta):
     return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
-@router.post("/registrar_usuario", status_code=status.HTTP_201_CREATED, response_model=UsuarioResponse)
+@router.post("/registrar-usuario", status_code=status.HTTP_201_CREATED, response_model=UsuarioResponse)
 async def registrarUsuario(usuarioRequest: UsuarioRequest, db: dbDependency):
     existeUsuario = (
         db.query(Usuario).filter(Usuario.username == usuarioRequest.username).first()

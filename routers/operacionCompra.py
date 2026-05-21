@@ -12,12 +12,12 @@ from exceptions import (
 from models import OperacionCompra, TransaccionCompra, Material
 from requests import OperacionCompraRequest
 from service.operacionCompraService import crearOperacionCompra
+from responses import OperacionCompraRepsonse
 
 router = APIRouter(
     prefix="/operaciones-compras",
     tags=["operaciones-compras"],
 )
-
 
 @router.post("/nueva-operacion", status_code=status.HTTP_201_CREATED)
 async def nuevaOperacionCompra(
@@ -49,7 +49,7 @@ async def nuevaOperacionCompra(
     return {"mensaje": "Operacion de compra creada correctamente"}
 
 
-@router.get("/lista", status_code=status.HTTP_200_OK)
+@router.get("/lista", status_code=status.HTTP_200_OK, response_model=list[OperacionCompraRepsonse])
 def obtenerOperacionesCompras(
     db: dbDependency, 
     usuario: dependenciaUsuario, 
@@ -63,7 +63,7 @@ def obtenerOperacionesCompras(
     return db.query(OperacionCompra).offset(skip).limit(limit).all()
 
 
-@router.get("/lista/{idTransaccion}", status_code=status.HTTP_200_OK)
+@router.get("/lista/{idTransaccion}", status_code=status.HTTP_200_OK, response_model=list[OperacionCompraRepsonse])
 def obtenerOperacionesComprasFiltradas(
     db: dbDependency,
     usuario: dependenciaUsuario,
@@ -76,31 +76,11 @@ def obtenerOperacionesComprasFiltradas(
     return db.query(OperacionCompra).filter_by(id_transaccion=idTransaccion).all()
 
 
-@router.get("/lista/mayoreo", status_code=status.HTTP_200_OK)
-def obtenerOperacionesComprasMayoreo(
-    db: dbDependency,
+@router.get("/lista-operaciones-menudeo", status_code=status.HTTP_200_OK, response_model=list[OperacionCompraRepsonse])
+async def obtenerOperacionesComprasMenudeo(
     usuario: dependenciaUsuario,
+    db: dbDependency,
     skip: int = 0,
-    limit: int = 10,
-):
-    if usuario is None:
-        raise usuarioNoEncontradoException
-    if not usuario.get("admin"):
-        raise noAutorizadoException
-    return (
-        db.query(OperacionCompra)
-        .filter(OperacionCompra.tipo_compra == "mayoreo")
-        .offset(skip)
-        .limit(limit)
-        .all()
-    )
-
-
-@router.get("/lista/menudeo", status_code=status.HTTP_200_OK)
-def obtenerOperacionesComprasMenudeo(
-    db: dbDependency, 
-    usuario: dependenciaUsuario, 
-    skip: int = 0, 
     limit: int = 10
 ):
     if usuario is None:
@@ -110,6 +90,25 @@ def obtenerOperacionesComprasMenudeo(
     return (
         db.query(OperacionCompra)
         .filter(OperacionCompra.tipo_compra == "menudeo")
+        .offset(skip)
+        .limit(limit)
+        .all()
+    )
+
+@router.get("/lista-operaciones-mayoreo", status_code=status.HTTP_200_OK, response_model=list[OperacionCompraRepsonse])
+async def obtenerOperacionesComprasMayoreo(
+    usuario: dependenciaUsuario,
+    db: dbDependency,
+    skip: int = 0,
+    limit: int = 10
+):
+    if usuario is None:
+        raise usuarioNoEncontradoException
+    if not usuario.get("admin"):
+        raise noAutorizadoException
+    return (
+        db.query(OperacionCompra)
+        .filter(OperacionCompra.tipo_compra == "mayoreo")
         .offset(skip)
         .limit(limit)
         .all()

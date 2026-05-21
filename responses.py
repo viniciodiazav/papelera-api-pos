@@ -56,3 +56,43 @@ class IniciarTrasaccionCompraResponse(BaseModel):
         "from_attributes": True
     }
 
+class OperacionCompraRepsonse(BaseModel):
+    id: int
+    peso_bruto_kgs: int
+    id_transaccion: int
+    id_material: int
+    peso_neto_kgs: int
+    descripcion_descuento: str
+    kgs_reales: int
+    tipo_compra: str
+    tara_kgs: int
+    descuento: int
+    descuento_kgs: int
+    precio_unitario: int
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class CompraMayoreoReponse(BaseModel):
+    id: int
+    id_proveedor: int
+    id_transaccion: int
+    placas: str
+    bascula: int
+    observaciones: str
+    fecha: datetime
+
+    model_config = {
+        "from_attributes": True
+    }
+
+class CompraMenudeoResponse(BaseModel):
+    id: int
+    id_transaccion: int
+    observaciones: str
+    fecha: datetime
+
+    model_config = {
+        "from_attributes": True
+    }
