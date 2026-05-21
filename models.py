@@ -36,6 +36,7 @@ class Material(Base):
     kgs_en_inventario = Column(Numeric(10, 2), nullable=False, default=0.00)
     constante_paca = Column(Numeric(10, 2), nullable=False, default=600.00)
     pacas_estimadas = Column(Numeric(10, 2), nullable=False, default=0.00)
+    pacas_reales = Column(Integer, nullable=False, default=0)
     activo = Column(Boolean, nullable=False, default=True)
 
 
@@ -110,12 +111,27 @@ class TransaccionVenta(Base):
     __tablename__ = "transacciones_venta"
 
     id = Column(Integer, primary_key=True, index=True)
-    id_cliente = Column(Integer, ForeignKey("clientes.id"), nullable=False)
-    cantidad_pacas = Column(Integer, nullable=False)
-    monto = Column(Numeric(10, 2), nullable=False)
-    tipo_cobro = Column(String(30), nullable=False)
-    observaciones = Column(String(150), nullable=True)
+    id_usuario = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
+    monto = Column(Numeric(10, 2), nullable=False, default=0.00)
+    tipo_cobro = Column(String(30), nullable=True, default=None)
+    observaciones = Column(String(150), nullable=True, default=None)
     cerrada = Column(Boolean, nullable=False, default=False)
+
+    operaciones = relationship(
+        "OperacionVenta", back_populates="transaccion", cascade="all, delete-orphan"
+    )
+
+
+class OperacionVenta(Base):
+    __tablename__ = "operaciones_venta"
+
+    id = Column(Integer, primary_key=True, index=True)
+    id_transaccion = Column(
+        Integer, ForeignKey("transacciones_venta.id"), nullable=False
+    )
+    id_material = Column(Integer, ForeignKey("materiales.id"), nullable=False)
+    cantidad_pacas = Column(Integer, nullable=False)
+    transaccion = relationship("TransaccionVenta", back_populates="operaciones")
 
 
 class CompraMayoreo(Base):
@@ -159,7 +175,11 @@ class Venta(Base):
     id = Column(Integer, primary_key=True, index=True)
     id_usuario = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
     id_transaccion = Column(
-        Integer, ForeignKey("transacciones_venta.id"), nullable=True, unique=True
+        Integer, 
+        ForeignKey("transacciones_venta.id"), 
+        nullable=True, 
+        unique=True, 
+        index=True
     )
     fecha = Column(TIMESTAMP, nullable=False)
     observaciones = Column(String(150), nullable=True)

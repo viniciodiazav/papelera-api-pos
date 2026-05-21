@@ -130,3 +130,23 @@ class CompraMenudeoResponse(BaseModel):
 class TodasLasComprasResponse(BaseModel):
     compras_mayoreo: list[CompraMayoreoResponse]
     compras_menudeo: list[CompraMenudeoResponse]
+
+class TransaccionVentaAdminResponse(BaseModel):
+    id: int
+    id_usuario: int
+    monto: Decimal
+    tipo_cobro: str
+    observaciones: str
+    cerrada: bool
+    
+    model_config = {
+        "from_attributes": True
+    }
+
+class IniciarTransaccionVentaResponse(BaseModel):
+    id: int
+    id_usuario: int
+
+    model_config = {
+        "from_attributes": True
+    }
