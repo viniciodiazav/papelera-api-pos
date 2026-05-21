@@ -13,7 +13,7 @@ from exceptions import (
 from models import CompraMayoreo, CompraMenudeo, Proveedor, TransaccionCompra
 from requests import CompraMayoreoRequest, CompraMenudeoRequest
 from datetime import datetime
-from responses import CompraMayoreoReponse, CompraMenudeoResponse, TodasLasComprasResponse
+from responses import CompraMayoreoResponse, CompraMenudeoResponse, TodasLasComprasResponse
 
 router = APIRouter(
     prefix="/compras",
@@ -114,7 +114,7 @@ def obtenerCompras(
     return {"compras_mayoreo": compras_mayoreo, "compras_menudeo": compras_menudeo}
 
 
-@router.get("/admin/compras-mayoreo", status_code=status.HTTP_200_OK, response_model=list[CompraMayoreoReponse])
+@router.get("/admin/compras-mayoreo", status_code=status.HTTP_200_OK, response_model=list[CompraMayoreoResponse])
 def obtenerComprasMayoreo(
     db: dbDependency, 
     usuario: dependenciaUsuario, 

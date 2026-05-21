@@ -9,7 +9,7 @@ from exceptions import (
     transaccionCerradaException,
 )
 from models import TransaccionCompra
-from responses import IniciarTrasaccionCompraResponse, TransaccionCompraAdminResponse
+from responses import IniciarTransaccionCompraResponse, TransaccionCompraAdminResponse
 
 
 router = APIRouter(
@@ -37,7 +37,7 @@ def obtenerTransaccionesCompras(
 
 @router.post("/nueva-transaccion-compra-mayoreo", 
     status_code=status.HTTP_201_CREATED, 
-    response_model=IniciarTrasaccionCompraResponse
+    response_model=IniciarTransaccionCompraResponse
 )
 async def nuevaTransaccionCompraMayoreo(
     db: dbDependency,
@@ -57,7 +57,7 @@ async def nuevaTransaccionCompraMayoreo(
 
 @router.post("/nueva-transaccion-compra-menudeo", 
     status_code=status.HTTP_201_CREATED, 
-    response_model=IniciarTrasaccionCompraResponse
+    response_model=IniciarTransaccionCompraResponse
 )
 async def nuevaTransaccionCompraMenudeo(
     db: dbDependency,

@@ -77,7 +77,7 @@ class TransaccionCompraAdminResponse(BaseModel):
         "from_attributes": True
     }
 
-class IniciarTrasaccionCompraResponse(BaseModel):
+class IniciarTransaccionCompraResponse(BaseModel):
     id: int
     id_usuario: int
     tipo_compra: str
@@ -104,7 +104,7 @@ class OperacionCompraAdminResponse(BaseModel):
         "from_attributes": True
     }
 
-class CompraMayoreoReponse(BaseModel):
+class CompraMayoreoResponse(BaseModel):
     id: int
     id_proveedor: int
     id_transaccion: int
@@ -128,5 +128,5 @@ class CompraMenudeoResponse(BaseModel):
     }
 
 class TodasLasComprasResponse(BaseModel):
-    compras_mayoreo: list[CompraMayoreoReponse]
+    compras_mayoreo: list[CompraMayoreoResponse]
     compras_menudeo: list[CompraMenudeoResponse]
