@@ -74,14 +74,14 @@ def crearTokenUsuario(usuario: Usuario, expiracion: timedelta):
 
 @router.post("/registrar-usuario", status_code=status.HTTP_201_CREATED, response_model=UsuarioResponse)
 async def registrarUsuario(usuarioRequest: UsuarioRequest, db: dbDependency, usuario: dependenciaUsuario):
+    if not usuario.get("admin"):
+        raise noAutorizadoException
+    
     existeUsuario = (
         db.query(Usuario).filter(Usuario.username == usuarioRequest.username).first()
     )
     if existeUsuario is not None:
         raise usuarioYaExisteException
-
-    if not usuario.get("admin"):
-        raise noAutorizadoException
 
     nuevoUsuario = Usuario(
         nombre=usuarioRequest.nombre,
