@@ -51,10 +51,7 @@ async def nuevaTransaccionVenta(
     db.refresh(transaccionVenta)
     return transaccionVenta
 
-@router.put("/cerrar-transaccion-venta/{id_transaccion_venta}",
-    status_code=status.HTTP_200_OK,
-    response_model=IniciarTransaccionVentaResponse
-)
+@router.put("/cerrar-transaccion-venta/{id_transaccion_venta}", status_code=status.HTTP_200_OK)
 async def cerrarTransaccionVenta(
     db: dbDependency,
     usuario: dependenciaUsuario,
