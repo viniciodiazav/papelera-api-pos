@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import Optional
 # pyrefly: ignore [missing-import]
 from datetime import datetime
+from models import CompraMayoreo, CompraMenudeo
 
 
 class UsuarioResponse(BaseModel):
@@ -96,3 +97,7 @@ class CompraMenudeoResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class TodasLasComprasResponse(BaseModel):
+    compras_mayoreo: list[CompraMayoreoReponse]
+    compras_menudeo: list[CompraMenudeoResponse]
