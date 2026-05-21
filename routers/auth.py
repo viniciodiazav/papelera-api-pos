@@ -11,6 +11,7 @@ from exceptions import (
     usuarioNoEncontradoException,
     contrasenaIncorrectaException,
     credentialException,
+    noAutorizadoException
 )
 # pyrefly: ignore [missing-import]
 from fastapi.security import OAuth2PasswordRequestForm, OAuth2PasswordBearer
@@ -72,12 +73,15 @@ def crearTokenUsuario(usuario: Usuario, expiracion: timedelta):
 
 
 @router.post("/registrar-usuario", status_code=status.HTTP_201_CREATED, response_model=UsuarioResponse)
-async def registrarUsuario(usuarioRequest: UsuarioRequest, db: dbDependency):
+async def registrarUsuario(usuarioRequest: UsuarioRequest, db: dbDependency, usuario: dependenciaUsuario):
     existeUsuario = (
         db.query(Usuario).filter(Usuario.username == usuarioRequest.username).first()
     )
     if existeUsuario is not None:
         raise usuarioYaExisteException
+
+    if not usuario.get("admin"):
+        raise noAutorizadoException
 
     nuevoUsuario = Usuario(
         nombre=usuarioRequest.nombre,

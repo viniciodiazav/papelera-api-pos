@@ -44,14 +44,18 @@ async def nuevaCompraMayoreo(
     if not transaccion.cerrada:
         raise transaccionNoCerradaException
 
-    if db.query(Proveedor).filter_by(id=compraMayoreo.id_proveedor).first() is None:
+    proveedor = db.query(Proveedor).filter(
+        Proveedor.id == compraMayoreo.id_proveedor,
+        Proveedor.activo == True
+    ).first()
+    if proveedor is None:
         raise proveedorNoEncontradoCompraException
 
-
+    proveedor.concurrencia += 1
     compra = CompraMayoreo(
-        id_proveedor=compraMayoreo.id_proveedor,
+        id_proveedor=proveedor.id,
         id_usuario=transaccion.id_usuario,
-        id_transaccion=compraMayoreo.id_transaccion,
+        id_transaccion=transaccion.id,
         fecha=datetime.utcnow(),
         placas=compraMayoreo.placas,
         bascula=compraMayoreo.bascula,

@@ -9,7 +9,6 @@ class UsuarioRequest(BaseModel):
     apellido: str = Field(min_length=3, max_length=40)
     username: str = Field(min_length=3, max_length=30)
     password: str = Field(min_length=8)
-    admin: Optional[bool] = Field(default=False)
 
     model_config = {
         "json_schema_extra": {
