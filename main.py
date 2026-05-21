@@ -10,11 +10,13 @@ from routers import (
     operacionCompra,
     compra,
     transaccionVenta,
+    usuarios,
 )
 
 app = FastAPI()
 
 app.include_router(auth.router)
+app.include_router(usuarios.router)
 app.include_router(proveedor.router)
 app.include_router(material.router)
 app.include_router(cliente.router)

@@ -1,5 +1,6 @@
 # pyrefly: ignore [missing-import]
 from decimal import Decimal
+# pyrefly: ignore [missing-import]
 from pydantic import BaseModel
 # pyrefly: ignore [missing-import]
 from typing import Optional
