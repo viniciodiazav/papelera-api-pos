@@ -69,8 +69,8 @@ class TransaccionCompraAdminResponse(BaseModel):
     id: int
     id_usuario: int
     monto: Decimal
-    tipo_pago: str
-    observaciones: str
+    tipo_pago: str | None
+    observaciones: str | None
     tipo_compra: str
     cerrada: bool
     
@@ -133,12 +133,12 @@ class TodasLasComprasResponse(BaseModel):
     compras_menudeo: list[CompraMenudeoResponse]
 
 class TransaccionVentaAdminResponse(BaseModel):
+    tipo_cobro: str | None
     id: int
+    cerrada: bool
     id_usuario: int
     monto: Decimal
-    tipo_cobro: str
-    observaciones: str
-    cerrada: bool
+    observaciones: str | None
     
     model_config = {
         "from_attributes": True
