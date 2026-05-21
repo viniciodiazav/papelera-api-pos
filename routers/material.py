@@ -14,12 +14,12 @@ from exceptions import (
 # pyrefly: ignore [missing-import]
 from requests import MaterialRequest, PrecioMaterialRequest, ConstantePacaRequest
 # pyrefly: ignore [missing-import]
-from responses import MaterialResponse
+from responses import MaterialResponse, MaterialesAdminResponse
 
 router = APIRouter(prefix="/material", tags=["Material"])
 
 
-@router.get("/", status_code=status.HTTP_200_OK)
+@router.get("/admin/todos-materiales", response_model=list[MaterialesAdminResponse], status_code=status.HTTP_200_OK)
 async def obtenerMateriales(db: dbDependency, usuario: dependenciaUsuario):
     if usuario is None:
         raise usuarioNoEncontradoException
@@ -45,7 +45,7 @@ async def materialPorId(db: dbDependency, usuario: dependenciaUsuario, id: int):
     return material
 
 
-@router.post("/nuevo-material", status_code=status.HTTP_201_CREATED)
+@router.post("/admin/nuevo-material", status_code=status.HTTP_201_CREATED, response_model=MaterialesAdminResponse)
 async def crearMaterial(
     db: dbDependency, usuario: dependenciaUsuario, material: MaterialRequest
 ):
@@ -62,7 +62,7 @@ async def crearMaterial(
     return material
 
 
-@router.put("/precio/{id}", status_code=status.HTTP_200_OK, response_model=MaterialResponse)
+@router.put("/admin/precio/{id}", status_code=status.HTTP_200_OK, response_model=MaterialResponse)
 async def actualizarPrecioMaterial(
     db: dbDependency,
     usuario: dependenciaUsuario,
@@ -82,7 +82,7 @@ async def actualizarPrecioMaterial(
     db.refresh(material)
     return material
 
-@router.put("/contante-paca/{id}", status_code=status.HTTP_200_OK)
+@router.put("/admin/contante-paca/{id}", status_code=status.HTTP_200_OK, response_model=MaterialResponse)
 async def actualizarConstantePaca(
     db: dbDependency,
     usuario: dependenciaUsuario,
@@ -104,7 +104,7 @@ async def actualizarConstantePaca(
     return material
 
 
-@router.delete("/{id}", status_code=status.HTTP_200_OK)
+@router.delete("/admin/{id}", status_code=status.HTTP_200_OK)
 async def eliminarMaterial(db: dbDependency, usuario: dependenciaUsuario, id: int):
     if usuario is None:
         raise usuarioNoEncontradoException

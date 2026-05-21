@@ -18,11 +18,16 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=list[ClienteResponse], status_code=status.HTTP_200_OK)
-def obtener_clientes(db: dbDependency, usuario: dependenciaUsuario):
+@router.get("/lista-clientes", response_model=list[ClienteResponse], status_code=status.HTTP_200_OK)
+def obtener_clientes(
+        db: dbDependency,
+        usuario: dependenciaUsuario,
+        skip: int = 0,
+        limit: int = 10
+    ):
     if usuario is None:
         raise usuarioNoEncontradoException
-    return db.query(Cliente).filter(Cliente.activo == True).all()
+    return db.query(Cliente).filter(Cliente.activo == True).offset(skip).limit(limit).all()
 
 
 @router.post("/nuevo-cliente", status_code=status.HTTP_201_CREATED, response_model=ClienteResponse)
@@ -40,7 +45,7 @@ def crear_cliente(
     return cliente
 
 
-@router.put("/{id}", response_model=ClienteResponse, status_code=status.HTTP_200_OK)
+@router.put("/admin/{id}", response_model=ClienteResponse, status_code=status.HTTP_200_OK)
 def actualizar_cliente(
     db: dbDependency,
     usuario: dependenciaUsuario,
@@ -68,7 +73,7 @@ def actualizar_cliente(
     return clienteActualizar
 
 
-@router.delete("/{id}", status_code=status.HTTP_200_OK)
+@router.delete("/admin/{id}", status_code=status.HTTP_200_OK)
 def eliminar_cliente(db: dbDependency, usuario: dependenciaUsuario, id: int):
     if usuario is None:
         raise usuarioNoEncontradoException

@@ -98,7 +98,7 @@ async def nuevaCompraMenudeo(
     return {"mensaje": "Compra de menudeo creada correctamente"}
 
 
-@router.get("/todas-las-compras", status_code=status.HTTP_200_OK, response_model=TodasLasComprasResponse)
+@router.get("/admin/todas-las-compras", status_code=status.HTTP_200_OK, response_model=TodasLasComprasResponse)
 def obtenerCompras(
     db: dbDependency, 
     usuario: dependenciaUsuario, 
@@ -114,7 +114,7 @@ def obtenerCompras(
     return {"compras_mayoreo": compras_mayoreo, "compras_menudeo": compras_menudeo}
 
 
-@router.get("/compras-mayoreo", status_code=status.HTTP_200_OK, response_model=list[CompraMayoreoReponse])
+@router.get("/admin/compras-mayoreo", status_code=status.HTTP_200_OK, response_model=list[CompraMayoreoReponse])
 def obtenerComprasMayoreo(
     db: dbDependency, 
     usuario: dependenciaUsuario, 
@@ -128,7 +128,7 @@ def obtenerComprasMayoreo(
     return db.query(CompraMayoreo).offset(skip).limit(limit).all()
 
 
-@router.get("/compras-menudeo", status_code=status.HTTP_200_OK, response_model=list[CompraMenudeoResponse])
+@router.get("/admin/compras-menudeo", status_code=status.HTTP_200_OK, response_model=list[CompraMenudeoResponse])
 def obtenerComprasMenudeo(
     db: dbDependency, 
     usuario: dependenciaUsuario, 

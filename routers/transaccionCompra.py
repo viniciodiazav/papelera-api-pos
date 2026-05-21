@@ -9,8 +9,7 @@ from exceptions import (
     transaccionCerradaException,
 )
 from models import TransaccionCompra
-from requests import TransaccionCompraRequest
-from responses import IniciarTrasaccionCompraResponse
+from responses import IniciarTrasaccionCompraResponse, TransaccionCompraAdminResponse
 
 
 router = APIRouter(
@@ -19,9 +18,15 @@ router = APIRouter(
 )
 
 
-@router.get("/")
+@router.get("/admin/lista-transacciones-compras", 
+    status_code=status.HTTP_200_OK, 
+    response_model=list[TransaccionCompraAdminResponse]
+)
 def obtenerTransaccionesCompras(
-    db: dbDependency, usuario: dependenciaUsuario, skip: int=0, limit: int=10
+    db: dbDependency,
+    usuario: dependenciaUsuario,
+    skip: int=0,
+    limit: int=10
 ):
     if usuario is None:
         raise usuarioNoEncontradoException
@@ -30,16 +35,19 @@ def obtenerTransaccionesCompras(
     return db.query(TransaccionCompra).offset(skip).limit(limit).all()
 
 
-@router.post("/nueva-transaccion-compra", status_code=status.HTTP_201_CREATED, response_model=IniciarTrasaccionCompraResponse)
-async def nueva_transaccion_compra(
+@router.post("/nueva-transaccion-compra-mayoreo", 
+    status_code=status.HTTP_201_CREATED, 
+    response_model=IniciarTrasaccionCompraResponse
+)
+async def nuevaTransaccionCompraMayoreo(
     db: dbDependency,
     usuario: dependenciaUsuario,
-    transaccion: TransaccionCompraRequest,
 ):
     if usuario is None:
         raise usuarioNoEncontradoException
     transaccionCompra = TransaccionCompra(
-        tipo_compra=transaccion.tipo_compra, id_usuario=usuario.get("id")
+        tipo_compra="mayoreo",
+        id_usuario=usuario.get("id")
     )
     db.add(transaccionCompra)
     db.commit()
@@ -47,8 +55,27 @@ async def nueva_transaccion_compra(
     return transaccionCompra
 
 
+@router.post("/nueva-transaccion-compra-menudeo", 
+    status_code=status.HTTP_201_CREATED, 
+    response_model=IniciarTrasaccionCompraResponse
+)
+async def nuevaTransaccionCompraMenudeo(
+    db: dbDependency,
+    usuario: dependenciaUsuario,
+):
+    if usuario is None:
+        raise usuarioNoEncontradoException
+    transaccionCompra = TransaccionCompra(
+        tipo_compra="menudeo",
+        id_usuario=usuario.get("id")
+    )
+    db.add(transaccionCompra)
+    db.commit()
+    db.refresh(transaccionCompra)
+    return transaccionCompra
+
 @router.put("/cerrar-transaccion/{idTransaccion}", status_code=status.HTTP_200_OK)
-async def cerrar_transaccion_compra(
+async def cerrarTransaccionCompra(
     db: dbDependency,
     usuario: dependenciaUsuario,
     idTransaccion: int,

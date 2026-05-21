@@ -119,18 +119,6 @@ class OperacionCompraRequest(BaseModel):
     }
 
 
-class TransaccionCompraRequest(BaseModel):
-    tipo_compra: str = Field(min_length=1, max_length=10)
-
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "tipo_compra": "mayoreo",
-            }
-        }
-    }
-
-
 class CompraMayoreoRequest(BaseModel):
     id_proveedor: int = Field(gt=0)
     id_transaccion: int = Field(gt=0)

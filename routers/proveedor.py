@@ -40,7 +40,7 @@ def crear_proveedor(
     return proveedor
 
 
-@router.put("/{id}", status_code=status.HTTP_200_OK, response_model=ProveedorResponse)
+@router.put("/admin/{id}", status_code=status.HTTP_200_OK, response_model=ProveedorResponse)
 def actualizar_proveedor(
     db: dbDependency, usuario: dependenciaUsuario, id: int, proveedor: ProveedorRequest
 ):
@@ -70,7 +70,7 @@ def actualizar_proveedor(
     return proveedorEditar
 
 
-@router.delete("/{id}", status_code=status.HTTP_200_OK)
+@router.delete("/admin/{id}", status_code=status.HTTP_200_OK)
 def eliminar_proveedor(db: dbDependency, usuario: dependenciaUsuario, id: int):
     if usuario is None:
         raise usuarioNoEncontradoException

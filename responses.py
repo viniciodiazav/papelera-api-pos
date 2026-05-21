@@ -1,4 +1,5 @@
 # pyrefly: ignore [missing-import]
+from decimal import Decimal
 from pydantic import BaseModel
 # pyrefly: ignore [missing-import]
 from typing import Optional
@@ -17,6 +18,21 @@ class UsuarioResponse(BaseModel):
     model_config = {
         "from_attributes": True
     }
+
+class MaterialesAdminResponse(BaseModel):
+    id: int
+    nombre: str
+    unidad_medida: str
+    precio_compra: Decimal
+    precio_venta: Decimal
+    kgs_en_inventario: Decimal
+    constante_paca: int
+    pacas_estimadas: Decimal
+
+    model_config = {
+        "from_attributes": True
+    }
+    
 
 class MaterialResponse(BaseModel):
     id: int
@@ -48,6 +64,19 @@ class ClienteResponse(BaseModel):
         "from_attributes": True
     }
 
+class TransaccionCompraAdminResponse(BaseModel):
+    id: int
+    id_usuario: int
+    monto: Decimal
+    tipo_pago: str
+    observaciones: str
+    tipo_compra: str
+    cerrada: bool
+    
+    model_config = {
+        "from_attributes": True
+    }
+
 class IniciarTrasaccionCompraResponse(BaseModel):
     id: int
     id_usuario: int
@@ -57,19 +86,19 @@ class IniciarTrasaccionCompraResponse(BaseModel):
         "from_attributes": True
     }
 
-class OperacionCompraRepsonse(BaseModel):
+class OperacionCompraAdminResponse(BaseModel):
     id: int
-    peso_bruto_kgs: int
     id_transaccion: int
     id_material: int
-    peso_neto_kgs: int
+    peso_bruto_kgs: Decimal
+    tara_kgs: Decimal
+    peso_neto_kgs: Decimal
+    descuento: Decimal
     descripcion_descuento: str
-    kgs_reales: int
+    descuento_kgs: Decimal
+    kgs_reales: Decimal
+    precio_unitario: Decimal
     tipo_compra: str
-    tara_kgs: int
-    descuento: int
-    descuento_kgs: int
-    precio_unitario: int
 
     model_config = {
         "from_attributes": True
