@@ -1,13 +1,12 @@
 # pyrefly: ignore [missing-import]
 from fastapi import APIRouter, status
-import uuid
 from database import dbDependency
 from .auth import dependenciaUsuario
 from models import Paca, Material
 from exceptions import usuarioNoEncontradoException, noAutorizadoException, materialNoEncontradoException, materialInsuficienteException
 from requests import PacaRequest
 from responses import PacaAdminResponse
-from service.pacasService import validarCantidadPacas
+from service.pacasService import validarCantidadPacas, generarCodigoPaca
 router = APIRouter(prefix="/pacas", tags=["Pacas"])
 
 @router.post("/guardar", status_code=status.HTTP_201_CREATED)
@@ -28,11 +27,10 @@ async def crearPaca(
         raise materialInsuficienteException
 
     for i in range(0, pacas.cantidad_pacas):
-        id_unico = str(uuid.uuid4())
         paca = Paca(
             id_material = material.id,
             peso_estimado = material.constante_paca,
-            codigo = id_unico
+            codigo = generarCodigoPaca()
         )
         db.add(paca)
         db.commit()

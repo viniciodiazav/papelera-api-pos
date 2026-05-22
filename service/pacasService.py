@@ -1,4 +1,5 @@
 from models import Material
+import uuid
 
 def verificacionDeMateriaPrima(cantidad: int, material: Material):
     materialDisponible = material.kgs_en_inventario - material.estimado_kg_pacas
@@ -10,4 +11,5 @@ def verificacionDeMateriaPrima(cantidad: int, material: Material):
     material.estimado_kg_pacas += cantidad * material.constante_paca
     return True    
 
-    
+def generarCodigoPaca() -> str:
+    return f"PAC-{uuid.uuid4().hex[:8].upper()}"
