@@ -19,4 +19,4 @@ async def obtenerUsuarios(
         raise usuarioNoEncontradoException
     if not usuario.get("admin"):
         raise noAutorizadoException
-    return db.query(Usuario).offset(skip).limit(limit).all()
+    return db.query(Usuario).filter(Usuario.activo == True).offset(skip).limit(limit).all()

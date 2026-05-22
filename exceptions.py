@@ -91,3 +91,8 @@ transaccionNoCerradaException = HTTPException(
     status_code=status.HTTP_400_BAD_REQUEST,
     detail="La transaccion todavia no esta cerrada",
 )
+
+materialInsuficienteException = HTTPException(
+    status_code=status.HTTP_400_BAD_REQUEST,
+    detail="No hay suficiente material para crear las pacas",
+)

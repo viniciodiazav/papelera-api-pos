@@ -28,6 +28,7 @@ class MaterialesAdminResponse(BaseModel):
     precio_venta: Decimal
     kgs_en_inventario: Decimal
     constante_paca: int
+    tolerancia_paca: Decimal
     pacas_estimadas: Decimal
 
     model_config = {

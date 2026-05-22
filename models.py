@@ -34,7 +34,9 @@ class Material(Base):
     precio_compra = Column(Numeric(10, 2), nullable=False)
     precio_venta = Column(Numeric(10, 2), nullable=False)
     kgs_en_inventario = Column(Numeric(10, 2), nullable=False, default=0.00)
+    estimado_kg_pacas = Column(Numeric(10,2), nullable=False, default=0.00)
     constante_paca = Column(Numeric(10, 2), nullable=False, default=600.00)
+    tolerancia_paca = Column(Numeric(3,2), nullable=False)
     pacas_estimadas = Column(Numeric(10, 2), nullable=False, default=0.00)
     pacas_reales = Column(Integer, nullable=False, default=0)
     activo = Column(Boolean, nullable=False, default=True)
@@ -45,7 +47,7 @@ class Paca(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     id_material = Column(Integer, ForeignKey("materiales.id"), nullable=False)
-    peso_kgs = Column(Numeric(10, 2), nullable=False)
+    peso_estimado = Column(Numeric(10, 2), nullable=False)
     codigo = Column(String(200), nullable=False, unique=True)
     en_inventario = Column(Boolean, nullable=False, default=True)
 
