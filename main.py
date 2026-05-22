@@ -11,6 +11,7 @@ from routers import (
     compra,
     transaccionVenta,
     usuarios,
+    pacas,
 )
 
 app = FastAPI()
@@ -24,5 +25,6 @@ app.include_router(transaccionCompra.router)
 app.include_router(operacionCompra.router)
 app.include_router(compra.router)
 app.include_router(transaccionVenta.router)
+app.include_router(pacas.router)
 
 Base.metadata.create_all(bind=engine)

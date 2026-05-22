@@ -153,3 +153,13 @@ class IniciarTransaccionVentaResponse(BaseModel):
         "from_attributes": True
     }
 
+
+class PacaAdminResponse(BaseModel):
+    id: int
+    id_material: int
+    peso_estimado: Decimal
+    codigo: str
+    
+    model_config = {
+        "from_attributes": True
+    }
