@@ -40,7 +40,6 @@ class ProveedorRequest(BaseModel):
 class MaterialRequest(BaseModel):
     nombre: str = Field(min_length=3, max_length=100)
     unidad_medida: str = Field(min_length=1, max_length=15)
-    tolerancia_paca: Decimal = Field(ge=0)
     precio_compra: Decimal = Field(gt=0)
     precio_venta: Decimal = Field(gt=0)
     constante_paca: Optional[Decimal] = Field(default=600.00)
@@ -50,7 +49,6 @@ class MaterialRequest(BaseModel):
             "example": {
                 "nombre": "carton",
                 "unidad_medida": "kg",
-                "tolerancia_paca": 10,
                 "precio_compra": 1,
                 "precio_venta": 2,
                 "constante_paca": 600,

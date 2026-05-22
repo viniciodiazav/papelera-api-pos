@@ -1,15 +1,24 @@
-from models import Material
+from models import Material, Paca
 import uuid
 
-def verificacionDeMateriaPrima(cantidad: int, material: Material):
-    materialDisponible = material.kgs_en_inventario - material.estimado_kg_pacas
-    if materialDisponible < 0:
-        return False
-    maximaCantidadPacas = materialDisponible // (material.constante_paca - material.tolerancia_paca)
-    if cantidad > maximaCantidadPacas:
-        return False
-    material.estimado_kg_pacas += cantidad * material.constante_paca
-    return True    
+def registrarProduccionPacas(cantidad: int, material: Material):
+    pesoTotalDescontar = cantidad * material.constante_paca
+    
+    if material.kgs_en_inventario < pesoTotalDescontar:
+        return []
 
-def generarCodigoPaca() -> str:
+    material.kgs_en_inventario -= pesoTotalDescontar
+    
+    nuevasPacas = []
+    for i in range(0, cantidad):
+        paca = Paca(
+            id_material = material.id,
+            peso_estimado = material.constante_paca,
+            codigo = generarCodigoPaca()
+        )
+        nuevasPacas.append(paca)
+
+    return nuevasPacas
+
+def generarCodigoPaca():
     return f"PAC-{uuid.uuid4().hex[:8].upper()}"

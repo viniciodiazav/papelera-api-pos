@@ -36,7 +36,6 @@ class Material(Base):
     kgs_en_inventario = Column(Numeric(10, 2), nullable=False, default=0.00)
     estimado_kg_pacas = Column(Numeric(10,2), nullable=False, default=0.00)
     constante_paca = Column(Numeric(10, 2), nullable=False, default=600.00)
-    tolerancia_paca = Column(Numeric(3,2), nullable=False)
     pacas_estimadas = Column(Numeric(10, 2), nullable=False, default=0.00)
     pacas_reales = Column(Integer, nullable=False, default=0)
     activo = Column(Boolean, nullable=False, default=True)

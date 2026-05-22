@@ -6,7 +6,7 @@ from models import Paca, Material
 from exceptions import usuarioNoEncontradoException, noAutorizadoException, materialNoEncontradoException, materialInsuficienteException
 from requests import PacaRequest
 from responses import PacaAdminResponse
-from service.pacasService import validarCantidadPacas, generarCodigoPaca
+from service.pacasService import registrarProduccionPacas
 router = APIRouter(prefix="/pacas", tags=["Pacas"])
 
 @router.post("/guardar", status_code=status.HTTP_201_CREATED)
@@ -22,21 +22,14 @@ async def crearPaca(
     if material is None:
         raise materialNoEncontradoException
 
-    validacion = validarCantidadPacas(db, material, pacas.cantidad_pacas)
-    if not validacion:
+    nuevasPacas = registrarProduccionPacas(pacas.cantidad, material)
+    if not nuevasPacas:
         raise materialInsuficienteException
 
-    for i in range(0, pacas.cantidad_pacas):
-        paca = Paca(
-            id_material = material.id,
-            peso_estimado = material.constante_paca,
-            codigo = generarCodigoPaca()
-        )
-        db.add(paca)
-        db.commit()
-        db.refresh(paca)
+    db.add_all(nuevasPacas)
+    db.commit()
 
-    return {f"mensaje":f"Se guardaron {len(pacas)} pacas de {material.nombre} exitosamente"}    
+    return {f"mensaje":f"Se guardaron {pacas.cantidad} pacas de {material.nombre} exitosamente"}    
 
 @router.get("/admin/obtener-pacas", response_model=list[PacaAdminResponse], status_code=status.HTTP_200_OK)
 async def obtenerPacas(
