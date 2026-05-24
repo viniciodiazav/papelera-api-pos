@@ -10,6 +10,7 @@ from exceptions import (
 )
 from models import TransaccionCompra
 from responses import IniciarTransaccionCompraResponse, TransaccionCompraAdminResponse
+from requests import CerrarTransaccionCompraRequest
 
 
 router = APIRouter(
@@ -74,19 +75,21 @@ async def nuevaTransaccionCompraMenudeo(
     db.refresh(transaccionCompra)
     return transaccionCompra
 
-@router.put("/cerrar-transaccion/{idTransaccion}", status_code=status.HTTP_200_OK)
+@router.put("/cerrar-transaccion", status_code=status.HTTP_200_OK)
 async def cerrarTransaccionCompra(
     db: dbDependency,
     usuario: dependenciaUsuario,
-    idTransaccion: int,
+    request: CerrarTransaccionCompraRequest,
 ):
     if usuario is None:
         raise usuarioNoEncontradoException
-    transaccion = db.query(TransaccionCompra).filter_by(id=idTransaccion).first()
+    transaccion = db.query(TransaccionCompra).filter_by(id=request.id_transaccion).first()
     if transaccion is None:
         raise transaccionNoEncontradaException
     if transaccion.cerrada:
         raise transaccionCerradaException
+    transaccion.tipo_pago = request.tipo_pago
+    transaccion.observaciones = request.observaciones
     transaccion.cerrada = True
     db.commit()
     db.refresh(transaccion)

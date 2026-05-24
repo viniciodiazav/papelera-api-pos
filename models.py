@@ -112,27 +112,32 @@ class TransaccionVenta(Base):
     __tablename__ = "transacciones_venta"
 
     id = Column(Integer, primary_key=True, index=True)
+    id_cliente = Column(Integer, ForeignKey("clientes.id"), nullable=False)
     id_usuario = Column(Integer, ForeignKey("usuarios.id"), nullable=False)
-    monto = Column(Numeric(10, 2), nullable=False, default=0.00)
-    tipo_cobro = Column(String(30), nullable=True, default=None)
-    observaciones = Column(String(150), nullable=True, default=None)
+    monto_bruto = Column(Numeric(10, 2), nullable=False, default=0.00)
+    iva = Column(Numeric(10,2), nullable=False, default=16.00)
+    envio = Column(Numeric(10,2), nullable=True)
+    monto_bruto_envio = Column(Numeric(10,2), nullable=False, default=0.00)
+    impuesto = Column(Numeric(10,2), nullable=False, default=0.00)
+    monto_neto = Column(Numeric(20, 2), nullable=False, defualt=0.00)
+    tipo_cobro = Column(String(30), nullable=True)
+    observaciones = Column(String(150), nullable=True)
     cerrada = Column(Boolean, nullable=False, default=False)
-
     operaciones = relationship(
         "OperacionVenta", back_populates="transaccion", cascade="all, delete-orphan"
     )
 
 
 class OperacionVenta(Base):
-    __tablename__ = "operaciones_venta"
+    __tablename__ = "detalles_venta"
 
     id = Column(Integer, primary_key=True, index=True)
-    id_transaccion = Column(
-        Integer, ForeignKey("transacciones_venta.id"), nullable=False
-    )
-    id_material = Column(Integer, ForeignKey("materiales.id"), nullable=False)
-    cantidad_pacas = Column(Integer, nullable=False)
-    transaccion = relationship("TransaccionVenta", back_populates="operaciones")
+    id_transaccion = Column(Integer, ForeignKey("transacciones_venta.id"), nullable=False)
+    id_paca = Column(Integer, ForeignKey("pacas.id"), nullable=False, unique=True) 
+    precio_unitario = Column(Numeric(10, 2), nullable=False) 
+
+    transaccion = relationship("TransaccionVenta", back_populates="detalles")
+    paca = relationship("Paca")
 
 
 class CompraMayoreo(Base):

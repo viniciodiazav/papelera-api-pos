@@ -45,11 +45,17 @@ async def obtenerPacas(
     return db.query(Paca).filter(Paca.en_inventario == True).offset(skip).limit(limit).all()
 
 @router.get("/obtener-pacas-filtar-por-material/{id}", response_model=list[PacaAdminResponse], status_code=status.HTTP_200_OK)
-async def obtenerPacasFiltrarPorMaterial(db: dbDependency, usuario: dependenciaUsuario, id: int):
+async def obtenerPacasFiltrarPorMaterial(
+    db: dbDependency, 
+    usuario: dependenciaUsuario, 
+    id: int, 
+    skip: int = 0, 
+    limit: int = 10
+):
     if usuario is None:
         raise usuarioNoEncontradoException
     if not usuario.get("admin"):
         raise noAutorizadoException
     if db.query(Material).filter(Material.id == id, Material.activo == True).first() is None:
         raise materialNoEncontradoException
-    return db.query(Paca).filter(Paca.en_inventario == True, Paca.id_material == id).all()
+    return db.query(Paca).filter(Paca.en_inventario == True, Paca.id_material == id).offset(skip).limit(limit).all()

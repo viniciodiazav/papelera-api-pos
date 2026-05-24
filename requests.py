@@ -163,3 +163,18 @@ class PacaRequest(BaseModel):
             }
         }
     }
+
+class CerrarTransaccionCompraRequest(BaseModel):
+    id_transaccion: int = Field(gt=0)
+    tipo_pago: str = Field(max_length=30)
+    observaciones: Optional[str] = Field(max_length=150, default=None)
+
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "id_transaccion": 1,
+                "observaciones": "observaciones",
+                "tipo_pago": "efectivo",
+            }
+        }
+    }
